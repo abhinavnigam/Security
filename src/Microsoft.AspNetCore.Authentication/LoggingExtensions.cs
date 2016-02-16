@@ -13,6 +13,8 @@ namespace Microsoft.Extensions.Logging
         private static Action<ILogger, string, Exception> _authSchemeSignedOut;
         private static Action<ILogger, string, Exception> _authSchemeChallenged;
         private static Action<ILogger, string, Exception> _authSchemeForbidden;
+        private static Action<ILogger, string, Exception> _userAuthorizationFailed;
+        private static Action<ILogger, string, Exception> _userAuthorizationSucceeded;
 
         static LoggingExtensions()
         {
@@ -40,6 +42,14 @@ namespace Microsoft.Extensions.Logging
                 eventId: 6,
                 logLevel: LogLevel.Information,
                 formatString: "AuthenticationScheme: {AuthenticationScheme} was forbidden.");
+            _userAuthorizationSucceeded = LoggerMessage.Define<string>(
+                eventId: 0,
+                logLevel: LogLevel.Information,
+                formatString: "Authorization was successful for user: {UserName}.");
+            _userAuthorizationFailed = LoggerMessage.Define<string>(
+                eventId: 0,
+                logLevel: LogLevel.Information,
+                formatString: "Authorization failed for user: {UserName}.");
         }
 
         public static void AuthenticationSchemeAuthenticated(this ILogger logger, string authenticationScheme)
@@ -70,6 +80,16 @@ namespace Microsoft.Extensions.Logging
         public static void AuthenticationSchemeForbidden(this ILogger logger, string authenticationScheme)
         {
             _authSchemeForbidden(logger, authenticationScheme, null);
+        }
+
+        public static void UserAuthorizationSucceeded(this ILogger logger, string userName)
+        {
+            _userAuthorizationSucceeded(logger, userName, null);
+        }
+
+        public static void UserAuthorizationFailed(this ILogger logger, string userName)
+        {
+            _userAuthorizationFailed(logger, userName, null);
         }
     }
 }
